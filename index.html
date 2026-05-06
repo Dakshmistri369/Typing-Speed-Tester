@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeVelocity — Pro Typing Speed Tester</title>
+  <meta name="description" content="Measure your typing speed in real-time with WPM, accuracy tracking, and detailed analytics. The most beautiful typing speed tester on the web." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+  <div class="bg-glow glow-3"></div>
+
+  <!-- Particles -->
+  <canvas id="particles-canvas"></canvas>
+
+  <div class="app-wrapper">
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="8" width="28" height="18" rx="3" fill="url(#logoGrad)" opacity="0.9"/>
+            <rect x="6" y="12" width="4" height="4" rx="1" fill="white" opacity="0.8"/>
+            <rect x="14" y="12" width="4" height="4" rx="1" fill="white" opacity="0.8"/>
+            <rect x="22" y="12" width="4" height="4" rx="1" fill="white" opacity="0.8"/>
+            <rect x="6" y="20" width="20" height="2" rx="1" fill="white" opacity="0.5"/>
+            <path d="M12 4L16 2L20 4" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="logoGrad" x1="2" y1="8" x2="30" y2="26" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#a78bfa"/>
+                <stop offset="1" stop-color="#38bdf8"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">TypeVelocity</span>
+          <span class="logo-tagline">Pro Typing Tester</span>
+        </div>
+      </div>
+
+      <nav class="header-nav">
+        <button class="nav-btn active" id="nav-test" data-tab="test">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.396 0 2.698.39 3.8 1.065.85-.527 1.96-.898 3.2-.898 1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.396 0-2.698.39-3.8 1.065A4.002 4.002 0 009 4.804z"/></svg>
+          Test
+        </button>
+        <button class="nav-btn" id="nav-results" data-tab="results">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+          History
+        </button>
+        <button class="nav-btn" id="nav-settings" data-tab="settings">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+          Settings
+        </button>
+      </nav>
+
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        <span>Live</span>
+      </div>
+    </header>
+
+    <!-- ===== TAB: TEST ===== -->
+    <main class="tab-content active" id="tab-test">
+
+      <!-- Stats bar -->
+      <div class="stats-bar">
+        <div class="stat-card" id="stat-wpm">
+          <div class="stat-value" id="wpm-display">0</div>
+          <div class="stat-label">WPM</div>
+          <div class="stat-sublabel">Words per min</div>
+        </div>
+        <div class="stat-card highlight" id="stat-raw">
+          <div class="stat-value" id="raw-display">0</div>
+          <div class="stat-label">RAW</div>
+          <div class="stat-sublabel">Raw WPM</div>
+        </div>
+        <div class="stat-card" id="stat-accuracy">
+          <div class="stat-value" id="accuracy-display">100<span class="stat-unit">%</span></div>
+          <div class="stat-label">ACC</div>
+          <div class="stat-sublabel">Accuracy</div>
+        </div>
+        <div class="stat-card" id="stat-timer">
+          <div class="stat-value" id="timer-display">60</div>
+          <div class="stat-label">TIME</div>
+          <div class="stat-sublabel">Seconds left</div>
+        </div>
+        <div class="stat-card" id="stat-streak">
+          <div class="stat-value" id="streak-display">0</div>
+          <div class="stat-label">STREAK</div>
+          <div class="stat-sublabel">Correct chars</div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+        <div class="progress-glow" id="progress-glow"></div>
+      </div>
+
+      <!-- Mode selector -->
+      <div class="mode-selector">
+        <div class="mode-group" id="mode-time">
+          <span class="mode-label">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
+            Time
+          </span>
+          <button class="mode-btn active" data-time="15">15s</button>
+          <button class="mode-btn" data-time="30">30s</button>
+          <button class="mode-btn active-time" data-time="60">60s</button>
+          <button class="mode-btn" data-time="120">120s</button>
+        </div>
+        <div class="mode-divider"></div>
+        <div class="mode-group" id="mode-type">
+          <span class="mode-label">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.244 13.081l.943-2.803H6.66l.944 2.803H8.86L5.54 3.75H4.322L1 13.081h1.244zm2.7-7.923L6.34 9.314H3.51l1.394-4.156zm9.146 7.027h.035v.896h1.128V8.125c0-1.51-1.114-2.345-2.646-2.345-1.736 0-2.59.916-2.666 2.174h1.108c.068-.718.595-1.19 1.517-1.19.971 0 1.518.52 1.518 1.464v.731H12.19c-1.647.007-2.522.8-2.522 2.058 0 1.319.957 2.18 2.345 2.18 1.06 0 1.75-.498 2.078-1.133zm-1.763.035c-.752 0-1.456-.397-1.456-1.244 0-.65.424-1.115 1.408-1.115h1.805v.834c0 .896-.752 1.525-1.757 1.525z"/></svg>
+            Type
+          </span>
+          <button class="mode-btn active" data-mode="words" id="type-words">Words</button>
+          <button class="mode-btn" data-mode="quotes" id="type-quotes">Quotes</button>
+          <button class="mode-btn" data-mode="code" id="type-code">Code</button>
+        </div>
+        <div class="mode-divider"></div>
+        <div class="mode-group" id="mode-difficulty">
+          <span class="mode-label">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/></svg>
+            Difficulty
+          </span>
+          <button class="mode-btn active" data-diff="easy">Easy</button>
+          <button class="mode-btn" data-diff="medium">Medium</button>
+          <button class="mode-btn" data-diff="hard">Hard</button>
+        </div>
+      </div>
+
+      <!-- Typing area -->
+      <div class="typing-container" id="typing-container">
+        <div class="typing-header">
+          <div class="typing-status" id="typing-status">
+            <span class="status-dot idle"></span>
+            <span id="status-text">Click here or press any key to start</span>
+          </div>
+          <button class="icon-btn" id="refresh-btn" title="New text (Tab)">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+          </button>
+        </div>
+
+        <div class="words-display" id="words-display"></div>
+
+        <div class="input-row">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="typing-input"
+              class="typing-input"
+              placeholder="Start typing..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            />
+            <div class="input-cursor-line"></div>
+          </div>
+          <button class="restart-btn" id="restart-btn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+            Restart
+          </button>
+        </div>
+
+        <!-- Keyboard hint -->
+        <div class="keyboard-hints">
+          <kbd>Tab</kbd> New text &nbsp;•&nbsp; <kbd>Esc</kbd> Restart
+        </div>
+        <!-- Mobile tap button -->
+        <button class="mobile-keyboard-btn" id="mobile-keyboard-btn">⌨️ &nbsp; Tap to Type</button>
+      </div>
+
+      <!-- Mini live chart -->
+      <div class="live-chart-container">
+        <div class="chart-header">
+          <h3>Live WPM Chart</h3>
+          <span class="chart-badge">Real-time</span>
+        </div>
+        <canvas id="wpm-chart" height="80"></canvas>
+      </div>
+
+    </main>
+
+    <!-- ===== TAB: RESULTS ===== -->
+    <main class="tab-content" id="tab-results">
+      <div class="results-header">
+        <h2>Performance History</h2>
+        <button class="danger-btn" id="clear-history-btn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          Clear All
+        </button>
+      </div>
+
+      <!-- Personal bests -->
+      <div class="pb-row">
+        <div class="pb-card">
+          <div class="pb-icon">🏆</div>
+          <div class="pb-info">
+            <div class="pb-value" id="pb-wpm">—</div>
+            <div class="pb-label">Best WPM</div>
+          </div>
+        </div>
+        <div class="pb-card">
+          <div class="pb-icon">🎯</div>
+          <div class="pb-info">
+            <div class="pb-value" id="pb-accuracy">—</div>
+            <div class="pb-label">Best Accuracy</div>
+          </div>
+        </div>
+        <div class="pb-card">
+          <div class="pb-icon">🔥</div>
+          <div class="pb-info">
+            <div class="pb-value" id="pb-tests">0</div>
+            <div class="pb-label">Tests Taken</div>
+          </div>
+        </div>
+        <div class="pb-card">
+          <div class="pb-icon">⚡</div>
+          <div class="pb-info">
+            <div class="pb-value" id="pb-avg">—</div>
+            <div class="pb-label">Avg WPM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WPM trend chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>WPM Over Time</h3>
+          <span class="chart-badge">History</span>
+        </div>
+        <canvas id="history-chart" height="120"></canvas>
+      </div>
+
+      <!-- Results list -->
+      <div class="results-list" id="results-list">
+        <div class="results-empty" id="results-empty">
+          <div class="empty-icon">📊</div>
+          <p>No tests yet. Start typing to see your results here!</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== TAB: SETTINGS ===== -->
+    <main class="tab-content" id="tab-settings">
+      <div class="settings-header">
+        <h2>Preferences</h2>
+        <button class="secondary-btn" id="reset-settings-btn">Reset Defaults</button>
+      </div>
+
+      <div class="settings-grid">
+        <div class="settings-section">
+          <h3 class="settings-section-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+            Appearance
+          </h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label for="theme-select" class="setting-label">Theme</label>
+              <span class="setting-desc">Choose your visual style</span>
+            </div>
+            <select id="theme-select" class="setting-select">
+              <option value="dark">Dark (Default)</option>
+              <option value="midnight">Midnight Blue</option>
+              <option value="aurora">Aurora</option>
+              <option value="ember">Ember</option>
+              <option value="matrix">Matrix</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label for="font-select" class="setting-label">Typing Font</label>
+              <span class="setting-desc">Font used in the typing area</span>
+            </div>
+            <select id="font-select" class="setting-select">
+              <option value="JetBrains Mono">JetBrains Mono</option>
+              <option value="monospace">System Mono</option>
+              <option value="Courier New">Courier New</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label for="font-size" class="setting-label">Font Size</label>
+              <span class="setting-desc" id="font-size-desc">20px</span>
+            </div>
+            <input type="range" id="font-size" class="setting-range" min="14" max="28" value="20" />
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="settings-section-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+            Behavior
+          </h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Sound Effects</label>
+              <span class="setting-desc">Play sounds on keystrokes</span>
+            </div>
+            <label class="toggle" id="sound-toggle-label">
+              <input type="checkbox" id="sound-toggle" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Show Live Chart</label>
+              <span class="setting-desc">Real-time WPM visualization</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="chart-toggle" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Smooth Caret</label>
+              <span class="setting-desc">Animate the caret movement</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="caret-toggle" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label class="setting-label">Word Count Display</label>
+              <span class="setting-desc">Show words typed / total</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="wordcount-toggle" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== RESULT MODAL ===== -->
+    <div class="modal-overlay" id="result-modal">
+      <div class="modal">
+        <div class="modal-confetti" id="modal-confetti"></div>
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <h2 class="modal-title">Test Complete!</h2>
+            <div class="modal-badge" id="modal-badge">🎯</div>
+          </div>
+          <button class="modal-close" id="modal-close">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </button>
+        </div>
+
+        <div class="modal-stats">
+          <div class="modal-stat primary">
+            <div class="modal-stat-value" id="modal-wpm">—</div>
+            <div class="modal-stat-label">WPM</div>
+          </div>
+          <div class="modal-stat">
+            <div class="modal-stat-value" id="modal-raw">—</div>
+            <div class="modal-stat-label">Raw</div>
+          </div>
+          <div class="modal-stat">
+            <div class="modal-stat-value" id="modal-accuracy">—</div>
+            <div class="modal-stat-label">Accuracy</div>
+          </div>
+          <div class="modal-stat">
+            <div class="modal-stat-value" id="modal-chars">—</div>
+            <div class="modal-stat-label">Chars</div>
+          </div>
+          <div class="modal-stat">
+            <div class="modal-stat-value" id="modal-errors">—</div>
+            <div class="modal-stat-label">Errors</div>
+          </div>
+          <div class="modal-stat">
+            <div class="modal-stat-value" id="modal-time">—</div>
+            <div class="modal-stat-label">Time</div>
+          </div>
+        </div>
+
+        <!-- Performance message -->
+        <div class="perf-message" id="perf-message"></div>
+
+        <!-- Modal chart -->
+        <div class="modal-chart-wrap">
+          <canvas id="modal-chart" height="90"></canvas>
+        </div>
+
+        <div class="modal-actions">
+          <button class="primary-btn" id="modal-restart">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+            Try Again
+          </button>
+          <button class="secondary-btn" id="modal-history">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+            View History
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== MOBILE BOTTOM NAV ===== -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-inner">
+      <button class="mobile-nav-btn active" data-tab="test">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.396 0 2.698.39 3.8 1.065.85-.527 1.96-.898 3.2-.898 1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.396 0-2.698.39-3.8 1.065A4.002 4.002 0 009 4.804z"/></svg>
+        Test
+      </button>
+      <button class="mobile-nav-btn" data-tab="results">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        History
+      </button>
+      <button class="mobile-nav-btn" data-tab="settings">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        Settings
+      </button>
+    </div>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
